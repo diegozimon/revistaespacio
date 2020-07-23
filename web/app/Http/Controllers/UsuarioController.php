@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Usuario;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
-use web\Http\Request;
+//use web\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request\UsuarioFormRequest;
 use DB;
@@ -23,12 +23,28 @@ class UsuarioController extends Controller
     
     public function index(Request $request)
     {
-        return "Te estamos mirando usuario";
-        
-        if($request){
-            $query=trim($request->get('searchText'));
-            $usuarios=DB::table('usuarios')->where('username','LIKE','%'.$query.'%')->orderBy('id','desc')->paginate(5);
-            return view('revista.usuario.index',["usuarios"=>$usuarios,"searchText"=>$query]);
+        try{
+            //$usuarios=DB::table('usuarios')->orderBy('id','desc')->paginate(5);
+            //$var = "asda";
+            //error_log('Some message here.' . print_r($usuarios, true));
+            //error_log('Some message here.' . $var);
+            if($request){
+                //$query=trim($request->get('searchText'));
+                //$usuarios=DB::table('usuarios')->where('username','LIKE','%'.$query.'%')->orderBy('id','desc')->paginate(5);
+                //error_log('Some message here. - 1');
+                $usuarios=DB::table('usuarios')->orderBy('id','desc')->paginate(5);
+                //error_log('Some message here. - 2');
+                //foreach($usuarios as $usuario){                
+                //    error_log('Some message here. - 3'.print_r($usuario, true));
+                //}
+                return view('revista.usuario.index', ['usuarios' => $usuarios]);
+            }else{                
+                return "Te estamos mirando usuario";
+            }
+        }
+        catch(Exception $e)
+        {
+            return "Te estamos mirando asdasds";
         }
     }
 
@@ -59,7 +75,7 @@ class UsuarioController extends Controller
         $usuario->direccion=$request->get('direccion');
         $usuario->ciudad_id=$request->get('ciudad_id');
         $usuario->save();
-        eturn Redirect::to('revista/usuario')
+        return Redirect::to('revista/usuario');
     
     }
 

@@ -12,7 +12,7 @@ class Perfil extends Model
     ];
 
     public function usuarios(){
-        return $this->belongsToMany("App\Usuario");
+        return $this->belongsToMany("App\Models\Usuario");
     }
 
 }
