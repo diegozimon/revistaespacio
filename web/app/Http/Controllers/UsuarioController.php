@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Models\Ciudad;
 use Illuminate\Http\Request;
 //use web\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -24,19 +25,8 @@ class UsuarioController extends Controller
     public function index(Request $request)
     {
         try{
-            //$usuarios=DB::table('usuarios')->orderBy('id','desc')->paginate(5);
-            //$var = "asda";
-            //error_log('Some message here.' . print_r($usuarios, true));
-            //error_log('Some message here.' . $var);
             if($request){
-                //$query=trim($request->get('searchText'));
-                //$usuarios=DB::table('usuarios')->where('username','LIKE','%'.$query.'%')->orderBy('id','desc')->paginate(5);
-                //error_log('Some message here. - 1');
                 $usuarios=DB::table('usuarios')->orderBy('id','desc')->paginate(5);
-                //error_log('Some message here. - 2');
-                //foreach($usuarios as $usuario){                
-                //    error_log('Some message here. - 3'.print_r($usuario, true));
-                //}
                 return view('revista.usuario.index', ['usuarios' => $usuarios]);
             }else{                
                 return "Te estamos mirando usuario";
@@ -96,30 +86,28 @@ class UsuarioController extends Controller
      * @param  \App\Usuario  $usuario
      * @return \Illuminate\Http\Response
      */
-    public function edit($id )
+    public function edit($id)
     {
-        return view("revista.usuario.edit",["usuario"=>Usuario::findOrFail($id)]);
+        error_log("[edit]");
+        $usuario=Usuario::findOrFail($id);
+        $ciudades=Ciudad::all();
+        return view('revista.usuario.edit', ['usuario' => $usuario, 'ciudades' => $ciudades]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Usuario  $usuario
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UsuarioFormRequest $request, $id)
-    {
+    public function update(Request $request, $id)    {
+        error_log("[update]");
+
+        $this->validate($request
+                        ,[ 'nombre'=>'required']
+                        ,[ 'ciudad_id'=>'required']
+                        );
+
         $usuario=Usuario::findOrFail($id);
-        $usuario->username=$request->get('username');
-        $usuario->usermail=$request->get('usermail');
-        $usuario->password=$request->get('password');
         $usuario->nombre=$request->get('nombre');
-        $usuario->apellido=$request->get('apellido');
-        $usuario->direccion=$request->get('direccion');
         $usuario->ciudad_id=$request->get('ciudad_id');
         $usuario->update();
-        return Redirect::to('revista/usuario');
+
+        return redirect()->route('usuarios.index');
     }
 
     /**

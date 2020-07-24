@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +15,6 @@ class Entrada extends Model
 
     public function categorias()
     {
-        return $this->belongsToMany('App\Categoria');
+        return $this->belongsToMany('App\Models\Categoria');
     }
 }

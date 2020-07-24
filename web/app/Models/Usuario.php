@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +17,6 @@ class Usuario extends Model
     ];
 
     public function perfils(){
-        return $this->belongsToMany("App\Perfil");
+        return $this->belongsToMany("App\Models\Perfil");
     }
 }
