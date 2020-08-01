@@ -26,8 +26,11 @@ class UsuarioController extends Controller
     {
         try{
             if($request){
-                $usuarios=DB::table('usuarios')->orderBy('id','desc')->paginate(5);
-                return view('revista.usuario.index', ['usuarios' => $usuarios]);
+                $usuarios=DB::table('usuarios')->orderBy('id','asc')->paginate(5);
+                
+                $ciudades=Ciudad::all();
+                
+                return view('revista.usuario.index', ['usuarios' => $usuarios, 'ciudades' => $ciudades]);
             }else{                
                 return "Te estamos mirando usuario";
             }
@@ -45,8 +48,9 @@ class UsuarioController extends Controller
      */
     public function create()
     {
-        return view("revista.usuario.create");
-    }
+        $ciudades=Ciudad::all();
+        return view("revista.usuario.create",['ciudades'=>$ciudades]);
+    }    
 
     /**
      * Store a newly created resource in storage.
@@ -54,18 +58,14 @@ class UsuarioController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UsuarioFormRequest $request)
+    public function store(Request $request)
     {
-        $usuario=new Usuario;
-        $usuario->username=$request->get('username');
-        $usuario->usermail=$request->get('usermail');
-        $usuario->password=$request->get('password');
-        $usuario->nombre=$request->get('nombre');
-        $usuario->apellido=$request->get('apellido');
-        $usuario->direccion=$request->get('direccion');
-        $usuario->ciudad_id=$request->get('ciudad_id');
-        $usuario->save();
-        return Redirect::to('revista/usuario');
+        
+        
+        $this->validate($request,[ 'username'=>'required', 'usermail'=>'required', 'password'=>'required', 'nombre'=>'required', 'apellido'=>'required', 'direccion'=>'required', 'ciudad_id'=>'required']);
+        Usuario::create($request->all());
+        return redirect()->route('usuarios.index')->with('success','Registro creado satisfactoriamente');
+        
     
     }
 
@@ -97,13 +97,23 @@ class UsuarioController extends Controller
     public function update(Request $request, $id)    {
         error_log("[update]");
 
-        $this->validate($request
-                        ,[ 'nombre'=>'required']
-                        ,[ 'ciudad_id'=>'required']
+        $this->validate($request,
+                    [ 'username'=>'required'],
+                    [ 'usermail'=>'required'],
+                    [ 'nombre'=>'required'],
+                    [ 'apellido'=>'required'],
+                    [ 'password'=>'required'],
+                    [ 'direccion'=>'required'],
+                    [ 'ciudad_id'=>'required']
                         );
 
         $usuario=Usuario::findOrFail($id);
+        $usuario->username=$request->get('username');
+        $usuario->usermail=$request->get('usermail');
         $usuario->nombre=$request->get('nombre');
+        $usuario->apellido=$request->get('apellido');
+        $usuario->password=$request->get('password');
+        $usuario->direccion=$request->get('direccion');
         $usuario->ciudad_id=$request->get('ciudad_id');
         $usuario->update();
 
@@ -116,8 +126,11 @@ class UsuarioController extends Controller
      * @param  \App\Usuario  $usuario
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Usuario $usuario)
+    public function destroy($id)
     {
         //
+         Usuario::find($id)->delete();
+        return redirect()->route('usuarios.index')->with('success','Registro eliminado satisfactoriamente');
     }
+    
 }

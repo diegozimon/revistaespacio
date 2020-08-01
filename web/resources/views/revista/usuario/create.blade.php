@@ -1,5 +1,6 @@
 @extends('layouts.layout')
 @section('content')
+
 <div class="row">
 	<section class="content">
 		<div class="col-md-8 col-md-offset-2">
@@ -21,48 +22,72 @@
 
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">Nuevo Libro</h3>
+					<h3 class="panel-title">Agregar Nuevo Usuario</h3>
 				</div>
 				<div class="panel-body">					
 					<div class="table-container">
-						<form method="POST" action="{{ route('libro.store') }}"  role="form">
+						<form method="POST" action="{{ action('UsuarioController@store') }}"  role="form">
 							{{ csrf_field() }}
 							<div class="row">
 								<div class="col-xs-6 col-sm-6 col-md-6">
 									<div class="form-group">
-										<input type="text" name="nombre" id="nombre" class="form-control input-sm" placeholder="Nombre del libro">
+									<label for="username">Nombre de Usuario</label>
+										<input type="text" name="username" id="username" class="form-control input-sm">
 									</div>
 								</div>
 								<div class="col-xs-6 col-sm-6 col-md-6">
 									<div class="form-group">
-										<input type="text" name="npagina" id="npagina" class="form-control input-sm" placeholder="Número de Páginas">
+									<label for="usermail">Mail</label>
+										<input type="text" name="usermail" id="usermail" class="form-control input-sm">
 									</div>
 								</div>
-							</div>
-
-							<div class="form-group">
-								<textarea name="resumen" class="form-control input-sm" placeholder="Resumen"></textarea>
 							</div>
 							<div class="row">
 								<div class="col-xs-6 col-sm-6 col-md-6">
 									<div class="form-group">
-										<input type="text" name="edicion" id="edicion" class="form-control input-sm" placeholder="Edición del libro">
+									<label for="Nombre">Nombre</label>
+										<input type="text" name="nombre" id="nombre" class="form-control input-sm">
 									</div>
 								</div>
 								<div class="col-xs-6 col-sm-6 col-md-6">
 									<div class="form-group">
-										<input type="text" name="precio" id="precio" class="form-control input-sm" placeholder="Precio del libro">
+									    <label for="apellido">Apellido</label>
+										<input type="text" name="apellido" id="apellido" class="form-control input-sm">
 									</div>
 								</div>
 							</div>
 							<div class="form-group">
-								<textarea name="autor" class="form-control input-sm" placeholder="Autor"></textarea>
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label for="password">Contraseña</label>
+										<input type="password" name="password" id="passwrod" class="form-control input-sm">
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6">
+                                    <div class="form-group">
+                                        <label for="direccion">Dirección</label>
+										<input type="text" name="direccion" id="direccion" class="form-control input-sm">
+                                    </div>
+                                </div>	
+							</div> 
+							<div class="form-group">
+							  <label for="ciudad_id">Ciudad</label>
+                              <select class="form-control" id="ciudad_id" name="ciudad_id">
+                              <option value="">Seleccione una ciudad</option>
+                              @if($ciudades->count())  
+                            @foreach($ciudades as $ciudad)
+                                
+                                <option value="{{$ciudad->id}}">{{$ciudad->nombre}}</option>
+                            @endforeach
+                             @endif
+                              </select>
+                              
 							</div>
 							<div class="row">
 
 								<div class="col-xs-12 col-sm-12 col-md-12">
-									<input type="submit"  value="Guardar" class="btn btn-success btn-block">
-									<a href="{{ route('libro.index') }}" class="btn btn-info btn-block" >Atrás</a>
+									<input type="submit"  value="Actualizar" class="btn btn-success btn-block">
+									<a href="{{action('UsuarioController@index')}}" class="btn btn-danger btn-block" >Atrás</a>
 								</div>	
 
 							</div>

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Perfil;
+use App\Models\Perfil;
 use Illuminate\Http\Request;
 
 class PerfilController extends Controller
@@ -12,9 +12,15 @@ class PerfilController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct(){
+        
+    }
+    
     public function index()
     {
-        //
+        $perfiles=Perfil::all();
+        
+        return view('revista.perfil.index',['perfiles'=>$perfiles]);
     }
 
     /**
@@ -24,7 +30,7 @@ class PerfilController extends Controller
      */
     public function create()
     {
-        //
+        return view("revista.perfil.create");
     }
 
     /**
@@ -35,7 +41,12 @@ class PerfilController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,
+                        ['tipo'=>'required'],
+                        ['descripcion'=>'required']
+                       );
+        Perfil::create($request->all());
+        return redirect()->route('perfiles.index')->with('success','Perfil creado satisfactoriamente');
     }
 
     /**
@@ -55,9 +66,10 @@ class PerfilController extends Controller
      * @param  \App\Perfil  $perfil
      * @return \Illuminate\Http\Response
      */
-    public function edit(Perfil $perfil)
+    public function edit($id)
     {
-        //
+        $perfil=Perfil::findOrFail($id);
+        return view('revista.perfil.edit', ['perfil' => $perfil]);
     }
 
     /**
@@ -67,9 +79,19 @@ class PerfilController extends Controller
      * @param  \App\Perfil  $perfil
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Perfil $perfil)
+    public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,
+                    [ 'tipo'=>'required'],
+                    [ 'descripcion'=>'required']
+                       );
+
+        $pefil=Perfil::findOrFail($id);
+        $pefil->tipo=$request->get('tipo');
+        $pefil->descripcion=$request->get('descripcion');
+        $pefil->update();
+
+        return redirect()->route('perfiles.index')->with('success','Perfil actualizado satisfactoriamente');
     }
 
     /**
@@ -78,8 +100,9 @@ class PerfilController extends Controller
      * @param  \App\Perfil  $perfil
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Perfil $perfil)
+    public function destroy($id)
     {
-        //
+        Perfil::find($id)->delete();
+        return redirect()->route('perfiles.index')->with('success','Perfil eliminado satisfactoriamente');
     }
 }

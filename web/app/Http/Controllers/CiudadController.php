@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ciudad;
 use Illuminate\Http\Request;
+use DB;
 
 class CiudadController extends Controller
 {
@@ -12,9 +13,15 @@ class CiudadController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct(){
+        
+    }
+    
     public function index()
     {
-        //
+        $ciudades=Ciudad::all();
+        
+        return view('revista.ciudad.index',['ciudades'=>$ciudades]);
     }
 
     /**
@@ -24,7 +31,8 @@ class CiudadController extends Controller
      */
     public function create()
     {
-        //
+        
+        return view("revista.ciudad.create");
     }
 
     /**
@@ -35,7 +43,9 @@ class CiudadController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[ 'nombre'=>'required']);
+        Ciudad::create($request->all());
+        return redirect()->route('ciudades.index')->with('success','Registro creado satisfactoriamente');
     }
 
     /**
@@ -44,9 +54,9 @@ class CiudadController extends Controller
      * @param  \App\Ciudad  $ciudad
      * @return \Illuminate\Http\Response
      */
-    public function show(Ciudad $ciudad)
+    public function show($id)
     {
-        //
+        return view("revista.ciudad.show",["ciudad"=>Ciudad::findOrFail($id)]);
     }
 
     /**
@@ -55,9 +65,11 @@ class CiudadController extends Controller
      * @param  \App\Ciudad  $ciudad
      * @return \Illuminate\Http\Response
      */
-    public function edit(Ciudad $ciudad)
+    public function edit($id)
     {
-        //
+        
+        $ciudad=Ciudad::findOrFail($id);
+        return view('revista.ciudad.edit', ['ciudad' => $ciudad]);
     }
 
     /**
@@ -67,9 +79,17 @@ class CiudadController extends Controller
      * @param  \App\Ciudad  $ciudad
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ciudad $ciudad)
+    public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,
+                    [ 'nombre'=>'required']
+                       );
+
+        $ciudad=Ciudad::findOrFail($id);
+        $ciudad->nombre=$request->get('nombre');
+        $ciudad->update();
+
+        return redirect()->route('ciudades.index')->with('success','Registro actualizado satisfactoriamente');
     }
 
     /**
@@ -78,8 +98,9 @@ class CiudadController extends Controller
      * @param  \App\Ciudad  $ciudad
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Ciudad $ciudad)
+    public function destroy($id)
     {
-        //
+        Ciudad::find($id)->delete();
+        return redirect()->route('ciudades.index')->with('success','Registro eliminado satisfactoriamente');
     }
 }

@@ -9,7 +9,7 @@
           <div class="pull-left"><h3>Lista Usuarios</h3></div>
           <div class="pull-right">
             <div class="btn-group">
-              <a href="" class="btn btn-info" >Añadir Usuario</a>
+              <a href="{{action('UsuarioController@create')}}" class="btn btn-info" >Añadir Usuario</a>
             </div>
           </div>
           <div class="table-container">
@@ -33,14 +33,26 @@
                 <td>{{$usuario->usermail}}</td>
                 <td>{{$usuario->nombre}}</td>
                 <td>{{$usuario->apellido}}</td>
-                <td>{{$usuario->ciudad_id}}</td>
+                <td>
+                
+                @foreach($ciudades as $ciudad)
+                 
+                @if(($ciudad->id)==($usuario->ciudad_id))
+                {{$ciudad->nombre}}
+                @endif
+                @endforeach
+                
+                
+               
+                
+                </td>
                 <td><a class="btn btn-primary btn-xs" href="{{action('UsuarioController@edit', $usuario->id)}}" ><span class="glyphicon glyphicon-pencil"></span></a></td>
                 <td>
                   <form action="{{action('UsuarioController@destroy', $usuario->id)}}" method="post">
                    {{csrf_field()}}
                    <input name="_method" type="hidden" value="DELETE">
 
-                   <button class="btn btn-danger btn-xs" type="submit"><span class="glyphicon glyphicon-trash"></span></button>
+                      <button class="btn btn-danger btn-xs" type="submit"><span class="glyphicon glyphicon-trash"></span></button></form>
                  </td>
                </tr>
                @endforeach 

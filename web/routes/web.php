@@ -17,4 +17,23 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/home', function () {
+    return view('home');
+});
+
+
 Route::resource("usuarios", "UsuarioController");
+Route::resource("ciudades", "CiudadController");
+Route::resource("categorias", "CategoriaController");
+Route::resource("entradas", "EntradaController");
+Route::resource("perfiles", "PerfilController");
+
+Route::get('/registro','RegistroController@create');
+Route::post('registro','RegistroController@store');
+
+Route::get('/login','LoginController@login');
+Route::post('login','LoginController@login');
+Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
+Auth::routes();
+

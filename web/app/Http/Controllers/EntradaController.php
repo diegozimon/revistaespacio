@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Entrada;
+use App\Models\Entrada;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
+use DB;
 
 class EntradaController extends Controller
 {
@@ -12,9 +14,17 @@ class EntradaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct(){
+        
+    }
+    
     public function index()
     {
-        //
+         $entradas=DB::table('entradas')->orderBy('id','asc')->paginate(5);
+                
+                $usuarios=Usuario::all();
+                
+                return view('revista.entrada.index', ['entradas' => $entradas, 'usuarios' => $usuarios]);
     }
 
     /**
@@ -24,7 +34,9 @@ class EntradaController extends Controller
      */
     public function create()
     {
-        //
+        $usuarios=Usuario::all();
+                
+        return view('revista.entrada.create', ['usuarios' => $usuarios]);
     }
 
     /**
@@ -35,7 +47,18 @@ class EntradaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,
+                    [ 'titulo'=>'required'],
+                    [ 'contenido'=>'required'],
+                    [ 'imagen'=>'required'],
+                    [ 'estado'=>'required'],
+                    [ 'usuario_id'=>'required']
+                        );
+        
+        Entrada::create($request->all());
+        
+        return redirect()->route('contenidos.index')->with('success','Contenido creado satisfactoriamente');
+       
     }
 
     /**
@@ -44,9 +67,9 @@ class EntradaController extends Controller
      * @param  \App\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function show(Entrada $entrada)
+    public function show($id)
     {
-        //
+        return view("revista.contenido.show",["contenido"=>Contenido::findOrFail($id)]);
     }
 
     /**
@@ -55,9 +78,11 @@ class EntradaController extends Controller
      * @param  \App\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function edit(Entrada $entrada)
+    public function edit($id)
     {
-        //
+        $entrada=Entrada::findOrFail($id);
+        $usuarios=Usuario::all();
+        return view('revista.entrada.edit', ['entrada' => $entrada, 'usuarios' => $usuarios]);
     }
 
     /**
@@ -67,9 +92,25 @@ class EntradaController extends Controller
      * @param  \App\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Entrada $entrada)
+    public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,
+                    [ 'titulo'=>'required'],
+                    [ 'contenido'=>'required'],
+                    [ 'imagen'=>'required'],
+                    [ 'estado'=>'required'],
+                    [ 'usuario_id'=>'required']
+                        );
+
+        $entrada=Entrada::findOrFail($id);
+        $entrada->titulo=$request->get('titulo');
+        $entrada->contenido=$request->get('contenido');
+        $entrada->imagen=$request->get('imagen');
+        $entrada->estado=$request->get('estado');
+        $entrada->usuario_id=$request->get('usuario_id');
+        $entrada->update();
+
+        return redirect()->route('entradas.index');
     }
 
     /**
@@ -78,8 +119,9 @@ class EntradaController extends Controller
      * @param  \App\Entrada  $entrada
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Entrada $entrada)
+    public function destroy($id)
     {
-        //
+        Entrada::find($id)->delete();
+        return redirect()->route('entradas.index')->with('success','Contenido eliminado satisfactoriamente');
     }
 }

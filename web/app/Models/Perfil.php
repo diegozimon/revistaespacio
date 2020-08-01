@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Usuario;
 
 class Perfil extends Model
 {
@@ -12,7 +13,7 @@ class Perfil extends Model
     ];
 
     public function usuarios(){
-        return $this->belongsToMany("App\Models\Usuario");
+        return $this->belongsToMany(Usuario::class);
     }
 
 }

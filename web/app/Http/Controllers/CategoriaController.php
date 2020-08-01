@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Categoria;
+use App\Models\Categoria;
 use Illuminate\Http\Request;
+use DB;
 
 class CategoriaController extends Controller
 {
@@ -12,9 +13,15 @@ class CategoriaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct(){
+        
+    }
+    
     public function index()
     {
-        //
+         $categorias=Categoria::all();
+        
+        return view('revista.categoria.index',['categorias'=>$categorias]);
     }
 
     /**
@@ -24,7 +31,7 @@ class CategoriaController extends Controller
      */
     public function create()
     {
-        //
+        return view("revista.categoria.create");
     }
 
     /**
@@ -35,7 +42,9 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[ 'tipo'=>'required']);
+        Categoria::create($request->all());
+        return redirect()->route('categorias.index')->with('success','Registro creado satisfactoriamente');
     }
 
     /**
@@ -44,9 +53,9 @@ class CategoriaController extends Controller
      * @param  \App\Categoria  $categoria
      * @return \Illuminate\Http\Response
      */
-    public function show(Categoria $categoria)
+    public function show($id)
     {
-        //
+        return view("revista.categoria.show",["categoria"=>Categoria::findOrFail($id)]);
     }
 
     /**
@@ -55,9 +64,10 @@ class CategoriaController extends Controller
      * @param  \App\Categoria  $categoria
      * @return \Illuminate\Http\Response
      */
-    public function edit(Categoria $categoria)
+    public function edit($id)
     {
-        //
+        $categoria=Categoria::findOrFail($id);
+        return view('revista.categoria.edit', ['categoria' => $categoria]);
     }
 
     /**
@@ -67,9 +77,17 @@ class CategoriaController extends Controller
      * @param  \App\Categoria  $categoria
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Categoria $categoria)
+    public function update(Request $request, $id)
     {
-        //
+        $this->validate($request,
+                    [ 'tipo'=>'required']
+                       );
+
+        $categoria=Categoria::findOrFail($id);
+        $categoria->nombre=$request->get('tipo');
+        $categoria->update();
+
+        return redirect()->route('categorias.index')->with('success','Registro actualizado satisfactoriamente');
     }
 
     /**
@@ -78,8 +96,9 @@ class CategoriaController extends Controller
      * @param  \App\Categoria  $categoria
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Categoria $categoria)
+    public function destroy($id)
     {
-        //
+        Categoria::find($id)->delete();
+        return redirect()->route('categorias.index')->with('success','Registro eliminado satisfactoriamente');
     }
 }
